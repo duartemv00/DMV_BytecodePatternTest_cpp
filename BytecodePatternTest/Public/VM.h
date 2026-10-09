@@ -15,11 +15,11 @@ enum Instruction
     PLAY_SOUND = 0x07,
     SPAWN_PARTICLE = 0x08,
     ADD = 0x09,
-    DIVIDE = 0x10,
+    DIVIDE = 0xA,
 };
 
 /*
- * Class VM that interprets bytecode
+ * Class of the Virtual Machine that interprets Bytecode
  */
 class VM
 {
@@ -33,15 +33,18 @@ private:
     int stackSize_;
     int stack_[MAX_STACK_SIZE];
 
-    void push(int value);
+    bool checkNeededStackSize(int needSize);
+
+    bool push(int value);
     int pop();
     
-    void setHealth(int entity, int health);
+    bool setHealth(int entity, int health);
     int getHealth(int entity);
-    void setStrength(int entity, int strength);
+    bool setStrength(int entity, int strength);
     int getStrength(int entity);
-    void setAgility(int entity, int agility);
+    bool setAgility(int entity, int agility);
     int getAgility(int entity);
+    
     void playSound(int soundId);
     void spawnParticles(int particleId);
     

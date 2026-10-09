@@ -1,0 +1,17 @@
+﻿  BytecodePatternTest.cpp
+  Globals.cpp
+  VM.cpp
+C:\Users\duart\Desktop\DMV_BytecodePatternTest_cpp\BytecodePatternTest\Public\Log.h(13,62): warning C4477: 'fprintf' : format string '%s' requires an argument of type 'char *', but variadic argument 3 has type 'int'
+  (compiling source file 'Private/VM.cpp')
+  
+C:\Users\duart\Desktop\DMV_BytecodePatternTest_cpp\BytecodePatternTest\Public\Log.h(13,62): warning C4313: 'fprintf': '%s' in format string conflicts with argument 3 of type 'int'
+  (compiling source file 'Private/VM.cpp')
+  
+C:\Users\duart\Desktop\DMV_BytecodePatternTest_cpp\BytecodePatternTest\Public\Log.h(13,99): warning C4474: 'fprintf' : too many arguments passed for format string
+  (compiling source file 'Private/VM.cpp')
+      C:\Users\duart\Desktop\DMV_BytecodePatternTest_cpp\BytecodePatternTest\Public\Log.h(13,99):
+      placeholders and their parameters expect 3 variadic arguments, but 4 were provided
+  
+  Warrior.cpp
+  Generating Code...
+  BytecodePatternTest.vcxproj -> C:\Users\duart\Desktop\DMV_BytecodePatternTest_cpp\x64\Debug\BytecodePatternTest.exe

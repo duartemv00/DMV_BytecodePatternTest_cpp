@@ -1,5 +1,6 @@
 
 #include "../Public/VM.h"
+#include "../Public/Log.h"
 #include "../Public/Globals.h"
 
 void VM::interpreter(char bytecode[], size_t size)
@@ -8,137 +9,209 @@ void VM::interpreter(char bytecode[], size_t size)
     {
         char instruction = bytecode[i];
 
-        switch(instruction)
-        {
-        // SET AND GET STATS INSTRUCTIONS
-        case INT_LITERAL:
-            int value;
-            value = bytecode[++i];
-            push(value);
-            break;
-            
-        case SET_HEALTH:
-            int amountHealth;
-            amountHealth = pop();
-            int entityToSetHealth;
-            entityToSetHealth = pop();
-            setHealth(entityToSetHealth, amountHealth);
-            break;
+        switch(instruction) {
+            case INT_LITERAL: // Add new value to the stack
+            {
+                int value = bytecode[++i]; // takes the operand (next) and skips it.
+                push(value);
+                break;
+            }
+                
+            case SET_HEALTH: // Uses the last value to set the HEALTH of the entity corresponding to previous-to-last value
+            {    
+                if(!checkNeededStackSize(2)) break;
 
-        case GET_HEALTH:
-            int entityToGetHealth;
-            entityToGetHealth = pop();
-            push(getHealth(entityToGetHealth));
-            break;
-            
-        case SET_STRENGTH:
-            int amountStrength;
-            amountStrength = pop();
-            int entityToSetStrength;
-            entityToSetStrength = pop();
-            setStrength(entityToSetStrength, amountStrength);
-            break;
+                int amountHealth = pop();
+                int entityToSetHealth = pop();
+                setHealth(entityToSetHealth, amountHealth);
+                break;
+            }
 
-        case GET_STRENGTH:
-            int entityToGetStrength;
-            entityToGetStrength = pop();
-            push(getStrength(entityToGetStrength));
-            break;
-            
-        case SET_AGILITY:
-            int amountAgility;
-            amountAgility = pop();
-            int entityToSetAgility;
-            entityToSetAgility = pop();
-            setAgility(entityToSetAgility, amountAgility);
-            break;
+            case GET_HEALTH: // Swaps last stack value (read as entity) for the HEALTH of that entity
+            {    
+                if(!checkNeededStackSize(1)) break;
 
-        case GET_AGILITY:
-            int entityToGetAgility;
-            entityToGetAgility = pop();
-            push(getAgility(entityToGetAgility));
-            break;
+                int entityToGetHealth = pop();
+                push(getHealth(entityToGetHealth));
+                break;
+            } 
+
+            case SET_STRENGTH: // Uses the last value to set the STRENGTH of the entity corresponding to previous-to-last value
+            {
+                if(!checkNeededStackSize(2)) break;
+                
+                int amountStrength = pop();
+                int entityToSetStrength = pop();
+                setStrength(entityToSetStrength, amountStrength);
+                break;
+            }
+
+            case GET_STRENGTH: // Swaps last stack value (read as entity) for the STRENGTH of that entity
+            {    
+                if(!checkNeededStackSize(1)) break;    
+
+                int entityToGetStrength = pop();
+                push(getStrength(entityToGetStrength));
+                break;
+            }
+                
+            case SET_AGILITY: // Uses the last value to set the AGILITY of the entity corresponding to previous-to-last value
+            {
+                if(!checkNeededStackSize(2)) break;
             
-        case PLAY_SOUND:
-            playSound(pop());
-            break;
-            
-        case SPAWN_PARTICLE:
-            spawnParticles(pop());
-            break;
-            
-        // ARITHMETIC OPERATIONS INSTRUCTIONS
-        case ADD:
-        {
-            int a = pop();
-            int b = pop();
-            push(a + b); printf("a + b = %d\n", a + b);
-            break;
-        }
-            
-        case DIVIDE:
-        {
-            int a = pop();
-            int b = pop();
-            push(a / b);
-            break;
-        }
-            
-        default: break;
-            
+                int amountAgility = pop();
+                int entityToSetAgility = pop();
+                setAgility(entityToSetAgility, amountAgility);
+                break;
+            }
+
+            case GET_AGILITY:
+            {
+                if(!checkNeededStackSize(1)) break;
+                
+                int entityToGetAgility = pop();
+                push(getAgility(entityToGetAgility));
+                break;
+            }
+
+            case PLAY_SOUND:
+            {
+                playSound(pop());
+                break;
+            }
+                
+            case SPAWN_PARTICLE:
+            {
+                spawnParticles(pop());
+                break;
+            }
+                
+            case ADD:
+            {
+                int a = pop();
+                int b = pop();
+                push(a + b);
+                break;
+            }
+                
+            case DIVIDE:
+            {
+                int a = pop();
+                int b = pop();
+                push(a / b);
+                break;
+            }
+                
+            default: 
+            {
+                break;
+            }
         }
     }
 }
 
-void VM::push(int value)
+bool VM::checkNeededStackSize(int needSize){
+    if(stackSize_ < needSize)
+    {
+        LOG_ERROR("Stack doesn't have enough values for the operation.");
+        return false;
+    }
+    return true;
+}
+
+bool VM::push(int value)
 {
     // Check for stack overflow
-    assert(stackSize_ < MAX_STACK_SIZE); // If this fails, the program will crash
-    stack_[stackSize_++] = value; // Push value onto stack
+    if(stackSize_ > MAX_STACK_SIZE){ // last value needs to enter
+        LOG_ERROR("Stack size out of bounds");
+        return false;
+    } 
+
+    if(value < 0){ // last value needs to enter
+        LOG_ERROR("Negative values cannot be added to the stack");
+        return false;
+    } 
+
+    stack_[stackSize_++] = value; // Push value onto stack, then increment
+    return true;
 }
 
 int VM::pop()
 {
     // Make sure stack is not empty
-    assert(stackSize_ > 0); // If this fails, the program will crash
-    return stack_[--stackSize_]; // Pop value from stack
+    if(stackSize_ <= 0) {
+        LOG_ERROR("Not enough values to take from the stack");
+        return -1;
+    }
+    return stack_[--stackSize_]; // Decrement stack and take last value from it
 }
 
-void VM::setHealth(int entity, int health)
+
+
+
+bool VM::setHealth(int entity, int health)
 {
-    assert(entity <= getNumberOfWarriors() && entity >= 0);
-    warriors[entity]->setHealth(health);
+    if (entity >= getNumberOfWarriors() || entity < 0 || health < 0){
+        LOG_ERROR("Can't find entity to set Health, because Entity value is out of bounds");
+        return false;
+    }
+
+    warriors[entity]->setHealth(health); return true;
 }
 
 int VM::getHealth(int entity)
 {
-    assert(entity <= getNumberOfWarriors() && entity >= 0);
+    if (entity >= getNumberOfWarriors() || entity < 0){
+        LOG_ERROR("Can't find entity to get Health from, because Entity value is out of bounds");
+        return -1;
+    }
     return warriors[entity]->getHealth();
+}
+
+
+
+
+bool VM::setStrength(int entity, int strength)
+{
+    if (entity >= getNumberOfWarriors() || entity < 0 || strength < 0){
+        LOG_ERROR("Can't find entity to set Strength, because Entity value is out of bounds");
+        return false;
+    }
+    warriors[entity]->setStrength(strength); return true;
 }
 
 int VM::getStrength(int entity)
 {
-    assert(entity <= getNumberOfWarriors() && entity >= 0);
+    if (entity >= getNumberOfWarriors() || entity < 0){
+        LOG_ERROR("Can't find entity to get Strength from, because Entity value is out of bounds");
+        return -1;
+    }
     return warriors[entity]->getStrength();
+}
+
+
+
+
+bool VM::setAgility(int entity, int agility)
+{
+    if (entity >= getNumberOfWarriors() || entity < 0 || agility < 0){
+        LOG_ERROR("Can't find entity to set Agility, because Entity value is out of bounds");
+        return false;
+    }
+    warriors[entity]->setAgility(agility); return true;
 }
 
 int VM::getAgility(int entity)
 {
-    assert(entity <= getNumberOfWarriors() && entity >= 0);
+    if (entity >= getNumberOfWarriors() || entity < 0){
+        LOG_ERROR("Can't find entity to get Agility from, because Entity value is out of bounds");
+        return -1;
+    }
     return warriors[entity]->getAgility();
 }
 
-void VM::setStrength(int entity, int strength)
-{
-    assert(entity <= getNumberOfWarriors() && entity >= 0);
-    warriors[entity]->setStrength(strength);
-}
 
-void VM::setAgility(int entity, int agility)
-{
-    assert(entity <= getNumberOfWarriors() && entity >= 0);
-    warriors[entity]->setAgility(agility);
-}
+
 
 void VM::playSound(int soundId)
 {

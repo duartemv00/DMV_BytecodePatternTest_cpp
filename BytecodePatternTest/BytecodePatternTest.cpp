@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
     // Send the bytecode instructions to the VM
     vm->interpreter(bytecode, sizeof(bytecode));
 
-    std::printf("Warrior 0 health: %d\n", warriors[0]->getHealth() );
+    std::printf("Warrior 1 health: %d\n", warriors[0]->getHealth() );
     std::printf("Warrior 2 health: %d\n", warriors[2]->getHealth() );
     
     return 0;
