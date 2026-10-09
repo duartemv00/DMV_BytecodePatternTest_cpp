@@ -1,0 +1,63 @@
+# ---------------------------------------------
+# Build output (Visual Studio / MSBuild)
+# ---------------------------------------------
+x64/
+x86/
+Win32/
+ARM64/
+[Dd]ebug/
+[Rr]elease/
+[Bb]in/
+[Oo]bj/
+
+# Compiler / linker artifacts
+*.exe
+*.dll
+*.lib
+*.exp
+*.ilk
+*.obj
+*.o
+*.pch
+*.ipch
+*.pdb
+*.idb
+*.iobj
+*.ipdb
+*.res
+*.tlog
+*.lastbuildstate
+*.log
+
+# ---------------------------------------------
+# Visual Studio state (machine/user specific)
+# ---------------------------------------------
+.vs/
+ipch/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.VC.db
+*.VC.opendb
+*.sdf
+*.opensdf
+
+# ---------------------------------------------
+# JetBrains Rider
+# ---------------------------------------------
+.idea/
+
+# ---------------------------------------------
+# VS Code (keep the shared build/run config)
+# ---------------------------------------------
+.vscode/*
+!.vscode/tasks.json
+!.vscode/launch.json
+
+# ---------------------------------------------
+# OS files
+# ---------------------------------------------
+Thumbs.db
+Desktop.ini
+.DS_Store
