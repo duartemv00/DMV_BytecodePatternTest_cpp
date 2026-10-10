@@ -93,12 +93,20 @@ void VM::interpreter(char bytecode[], size_t size)
                 push(a + b);
                 break;
             }
+
+            case SUBSTRACT:
+            {
+                int a = pop();
+                int b = pop();
+                push(b - a);
+                break;
+            }
                 
             case DIVIDE:
             {
                 int a = pop();
                 int b = pop();
-                push(a / b);
+                push(b / a);
                 break;
             }
                 

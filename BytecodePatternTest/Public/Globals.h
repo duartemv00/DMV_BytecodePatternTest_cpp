@@ -1,8 +1,10 @@
 #pragma once
 #include "Warrior.h"
 
-constexpr int numberOfWarriors = 10;
-// extern void setNumberOfWarriors(int number);
-extern int getNumberOfWarriors();
+constexpr int MAX_NUM_WARRIORS = 10;
+// extern int numberOfWarriors;
 
-extern Warrior* warriors[numberOfWarriors];
+void setNumberOfWarriors(int number);
+int getNumberOfWarriors();
+
+extern Warrior* warriors[MAX_NUM_WARRIORS];

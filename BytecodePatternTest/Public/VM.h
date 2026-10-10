@@ -15,7 +15,8 @@ enum Instruction
     PLAY_SOUND = 0x07,
     SPAWN_PARTICLE = 0x08,
     ADD = 0x09,
-    DIVIDE = 0xA,
+    SUBSTRACT = 0xA,
+    DIVIDE = 0xB,
 };
 
 /*

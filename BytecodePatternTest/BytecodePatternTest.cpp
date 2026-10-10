@@ -13,6 +13,7 @@
 
 int main(int argc, char* argv[])
 {
+    setNumberOfWarriors(5);
     
     // Initialize the warriors array
     for (int i = 0; i < getNumberOfWarriors(); i++)
@@ -24,21 +25,28 @@ int main(int argc, char* argv[])
     VM* vm = new VM();
 
     // Create a set of instructions
-    char bytecode[] = {
+    char bytecode_stealHealth[] = {
+        INT_LITERAL, 1,
+        INT_LITERAL, 1,
+        GET_HEALTH,
+        INT_LITERAL, 10,
+        SUBSTRACT,
+        SET_HEALTH,
         INT_LITERAL, 0,
         INT_LITERAL, 0,
         GET_HEALTH,
-        INT_LITERAL, 0,
-        GET_STRENGTH,
+        INT_LITERAL, 10,
+        INT_LITERAL, 2,
+        DIVIDE,
         ADD,
         SET_HEALTH
     };
     
     // Send the bytecode instructions to the VM
-    vm->interpreter(bytecode, sizeof(bytecode));
+    vm->interpreter(bytecode_stealHealth, sizeof(bytecode_stealHealth));
 
     std::printf("Warrior 1 health: %d\n", warriors[0]->getHealth() );
-    std::printf("Warrior 2 health: %d\n", warriors[2]->getHealth() );
+    std::printf("Warrior 2 health: %d\n", warriors[1]->getHealth() );
     
     return 0;
 }
